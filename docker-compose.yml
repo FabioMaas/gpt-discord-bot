@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  gpt:
+    build: .
+    image: gpt-discord-bot:latest
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_GPT_SYSTEM_PROMPT=${OPENAI_GPT_SYSTEM_PROMPT}
+    volumes:
+      - gpt-discord-bot-data:/app/gpt-discord-bot/prompts
+    restart: always
+
+volumes:
+  gpt-discord-bot-data:
