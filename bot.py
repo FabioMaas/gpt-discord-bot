@@ -5,7 +5,8 @@ import openai
 import discord
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-json_path = os.path.join(script_dir, 'prompts', '')
+user_dir = os.path.join(script_dir, 'prompts', 'users')
+os.makedirs(user_dir, exist_ok=True)
 
 #Discord intents
 intents = discord.Intents.default()
@@ -78,14 +79,11 @@ async def send_bot_prompt(message, text_input):
     save_user_chat(message, messages)
     await message.channel.send(answered_message['content'])
 
-async def send_bot_summarize(message):
-    
-    directory = os.path.join(script_dir, 'prompts', 'users')
+async def send_bot_summarize(message):    
     result = ""
-
-    for filename in os.listdir(directory):
+    for filename in os.listdir(user_dir):
         if filename.endswith('.json'):
-            filepath = os.path.join(directory, filename)
+            filepath = os.path.join(user_dir, filename)
             with open(filepath, 'r') as file:
                 messages = json.load(file)
                 # Summarize
@@ -119,7 +117,7 @@ def load_base_message(message):
 
 def load_user_chat(message):
     user_id = message.author.id
-    filename = os.path.join(script_dir, 'prompts', 'users', f'{user_id}.json')
+    filename = os.path.join(user_dir, f'{user_id}.json')
 
     with lock:
         if os.path.isfile(filename):
@@ -131,7 +129,7 @@ def load_user_chat(message):
 
 def save_user_chat(message, messages):
     user_id = message.author.id
-    filename = os.path.join(script_dir, 'prompts', 'users', f'{user_id}.json')
+    filename = os.path.join(user_dir, f'{user_id}.json')
     with lock:
         with open(filename, 'w') as file:
             json.dump(messages, file, indent=4)
